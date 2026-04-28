@@ -742,6 +742,18 @@ body {
   flex-direction: column;
   min-height: 292px;
   box-shadow: 0 8px 20px rgba(9, 43, 88, 0.04);
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  cursor: pointer;
+}
+
+.landing-card:hover {
+  transform: translateY(-8px) scale(1.01);
+  box-shadow: 0 20px 40px rgba(1, 44, 99, 0.12);
+  border-color: #264f98;
+}
+
+.landing-card:active {
+  transform: translateY(-4px) scale(0.99);
 }
 
 .landing-card-icon {
@@ -791,6 +803,12 @@ body {
   align-items: center;
   justify-content: center;
   gap: 0.34rem;
+  transition: all 0.2s ease;
+}
+
+.landing-card-btn:hover {
+  transform: scale(1.03);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 .landing-card-btn.primary {
@@ -862,6 +880,12 @@ body {
   background: var(--brand-white);
   border: 1px solid var(--ink-100);
   box-shadow: var(--shadow-soft);
+  transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.25s ease;
+}
+
+.card:hover:not(.filter-card):not(.table-card) {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-lift);
 }
 
 .card-header {
@@ -1857,17 +1881,26 @@ tr:nth-child(even) td {
 }
 
 .btn {
-  border: 0;
-  border-radius: 10px;
-  padding: 0.56rem 0.86rem;
-  font: inherit;
-  font-size: 0.84rem;
-  font-weight: 700;
   display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.62rem 1.1rem;
+  border-radius: var(--radius-sm);
+  font-weight: 700;
+  font-size: 0.85rem;
   cursor: pointer;
-  transition: transform 0.2s ease, opacity 0.2s ease;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid transparent;
+}
+
+.btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.btn:active:not(:disabled) {
+  transform: translateY(0);
 }
 
 .btn:disabled {
@@ -1875,13 +1908,13 @@ tr:nth-child(even) td {
   cursor: not-allowed;
 }
 
-.btn:hover:not(:disabled) {
-  transform: translateY(-1px);
+.btn-primary {
+  background: var(--brand-blue-800);
+  color: white;
 }
 
-.btn-primary {
-  color: white;
-  background: linear-gradient(120deg, var(--brand-blue-800), var(--brand-blue-700));
+.btn-primary:hover:not(:disabled) {
+  background: var(--brand-blue-700);
 }
 
 .btn-secondary {
