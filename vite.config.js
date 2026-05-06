@@ -9,6 +9,7 @@ export default defineConfig({
       '/health': 'http://localhost:5000',
       '/contracts': 'http://localhost:5000',
       '/metadata': 'http://localhost:5000',
+      '/assistant': 'http://localhost:5000',
     },
   },
 })

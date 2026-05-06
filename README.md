@@ -17,6 +17,9 @@ Databricks-connected web app for:
    - `DATABRICKS_ACCESS_TOKEN`
 3. Set table path:
    - `DATABRICKS_TABLE=dis_pfc_con_gold_test.pbc_afh_contract`
+4. (Optional, for AI assistant) set:
+   - `OPENAI_API_KEY`
+   - `OPENAI_MODEL` (example: `gpt-4.1-mini`)
 
 Install backend dependencies:
 
@@ -76,3 +79,4 @@ Deploy steps:
 - `GET /metadata/packs`
 - `POST /contracts/upload`
 - `POST /contracts/override`
+- `POST /assistant/chat`

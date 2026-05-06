@@ -8,6 +8,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
+import requests
 
 try:
     from databricks import sql as databricks_sql
@@ -624,6 +625,57 @@ def _frontend_available():
     return _frontend_index_path().exists()
 
 
+def _normalize_chat_messages(raw_messages):
+    if not isinstance(raw_messages, list):
+        return None, "Chat payload must include a messages array."
+
+    normalized = []
+    for entry in raw_messages[-20:]:
+        if not isinstance(entry, dict):
+            continue
+
+        role = str(entry.get("role") or "").strip().lower()
+        content = str(entry.get("content") or "").strip()
+        if role not in {"user", "assistant", "system"} or not content:
+            continue
+
+        normalized.append({"role": role, "content": content[:4000]})
+
+    if not normalized:
+        return None, "At least one message is required."
+
+    if normalized[-1]["role"] != "user":
+        return None, "The latest chat message must be from the user."
+
+    return normalized, None
+
+
+def _extract_response_text(response_json):
+    direct = (response_json or {}).get("output_text")
+    if isinstance(direct, str) and direct.strip():
+        return direct.strip()
+
+    output_items = (response_json or {}).get("output") or []
+    text_parts = []
+    for item in output_items:
+        if not isinstance(item, dict):
+            continue
+        if item.get("type") != "message" or item.get("role") != "assistant":
+            continue
+        for content_part in item.get("content") or []:
+            if not isinstance(content_part, dict):
+                continue
+            if content_part.get("type") in {"output_text", "text"}:
+                text = str(content_part.get("text") or "").strip()
+                if text:
+                    text_parts.append(text)
+
+    if text_parts:
+        return "\n".join(text_parts).strip()
+
+    return ""
+
+
 @app.route("/")
 def home():
     if _frontend_available():
@@ -681,6 +733,94 @@ def databricks_health():
         )
     except Exception as err:
         return _error_response("Databricks health check failed.", 500, str(err))
+
+
+@app.route("/assistant/chat", methods=["POST"])
+def assistant_chat():
+    payload = request.get_json(silent=True) or {}
+    raw_messages = payload.get("messages") or []
+
+    messages, message_error = _normalize_chat_messages(raw_messages)
+    if message_error:
+        return _error_response(message_error, 400)
+
+    api_key = (os.getenv("OPENAI_API_KEY") or "").strip()
+    if not api_key:
+        return _error_response(
+            "AI assistant is not configured. Set OPENAI_API_KEY in backend environment.",
+            500,
+        )
+
+    model = (os.getenv("OPENAI_MODEL") or "gpt-4.1-mini").strip()
+    api_base = (os.getenv("OPENAI_API_BASE") or "https://api.openai.com/v1").rstrip("/")
+    timeout_seconds = _to_float_or_none(os.getenv("OPENAI_TIMEOUT_SECONDS")) or 45.0
+
+    system_prompt = (
+        "You are the PepsiCo Tibersoft Contracts Assistant. "
+        "Help users with contract upload rules, view filters, override operations, "
+        "and Databricks contract data understanding. Keep answers practical, concise, "
+        "and safe for enterprise usage."
+    )
+
+    request_body = {
+        "model": model,
+        "instructions": system_prompt,
+        "input": [
+            {
+                "role": message["role"],
+                "content": message["content"],
+            }
+            for message in messages
+        ],
+    }
+
+    try:
+        response = requests.post(
+            f"{api_base}/responses",
+            headers={
+                "Authorization": f"Bearer {api_key}",
+                "Content-Type": "application/json",
+            },
+            json=request_body,
+            timeout=timeout_seconds,
+        )
+    except requests.RequestException as err:
+        return _error_response("AI request failed.", 502, str(err))
+
+    if response.status_code >= 400:
+        error_details = None
+        try:
+            error_payload = response.json()
+            if isinstance(error_payload, dict):
+                if isinstance(error_payload.get("error"), dict):
+                    error_details = error_payload["error"].get("message")
+                elif error_payload.get("error"):
+                    error_details = str(error_payload.get("error"))
+        except Exception:
+            error_details = response.text[:600]
+
+        return _error_response(
+            "AI assistant request was rejected.",
+            502,
+            error_details or f"HTTP {response.status_code}",
+        )
+
+    try:
+        response_json = response.json()
+    except ValueError:
+        return _error_response("AI assistant returned invalid JSON.", 502)
+
+    reply = _extract_response_text(response_json)
+    if not reply:
+        return _error_response("AI assistant returned an empty response.", 502)
+
+    return jsonify(
+        {
+            "reply": reply,
+            "model": model,
+            "timestamp": dt.datetime.utcnow().isoformat() + "Z",
+        }
+    )
 
 
 @app.route("/contracts", methods=["GET"])

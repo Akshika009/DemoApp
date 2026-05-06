@@ -6,6 +6,7 @@ import OverrideContracts from './components/OverrideContracts';
 import UploadContracts from './components/UploadContracts';
 import ViewContracts from './components/ViewContracts';
 import AppFooter from './components/AppFooter';
+import AiAssistantWidget from './components/AiAssistantWidget';
 import pepsicoLogo from './assets/pepsico-logo-official.png';
 
 const defaultUserName = import.meta.env.VITE_DEFAULT_USER_NAME || 'Akshika Guglani';
@@ -103,6 +104,7 @@ function App() {
           </Routes>
         </main>
 
+        <AiAssistantWidget />
         <AppFooter />
       </div>
     </Router>
