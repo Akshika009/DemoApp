@@ -1,8 +1,13 @@
+
 command:
   - python
   - backend/app.py
 env:
-  - name: DATABRICKS_WAREHOUSE_ID
-    valueFrom: "sql-warehouse"
+  - name: DATABRICKS_SERVER_HOSTNAME
+    value: "dbc-92733279-b610.cloud.databricks.com"
+  - name: DATABRICKS_HTTP_PATH
+    value: "/sql/1.0/warehouses/bea2f60a6550d05f"
+  - name: DATABRICKS_ACCESS_TOKEN
+    value: "dapi75a52e8a4fd3a2a6c34d3ff2c788a7c2"
   - name: DATABRICKS_TABLE
-    valueFrom: "table"
+    value: "dis_pfc_con_gold_test.pbc_afh_contract"
