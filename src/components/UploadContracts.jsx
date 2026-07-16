@@ -16,8 +16,7 @@ const REQUIRED_FIELDS_STANDARD = [
   "ContractType", "ContractName", "StartDate", "EndDate", "InvenID", "GTIN", 
   "ItemDescription", "ChainID", "Pack", "LocId", "DistributionCenter", 
   "Distributor", "Customer", "ContractPrice", "DistFee", "Rebate", 
-  "LastUpdatedBy", "LastUpdatedDate", "Message", "FileName", 
-  "DistributorPrice", "Province", "Reason"
+  "LastUpdatedBy", "LastUpdatedDate", "Message", "FileName"
 ];
 
 const CORE_PREVIEW_FIELDS = [
