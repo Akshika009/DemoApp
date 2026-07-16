@@ -18,14 +18,13 @@ import {
 } from '../lib/contractsSchema';
 
 const REQUIRED_BY_OVERRIDE_TYPE = {
-  distributor_price: ['distributors'],
   chain_customer: ['chains'],
   pdp_customer: ['chains', 'distributors', 'distributionCenters'],
   pdp_off_tier: ['chains', 'distributors', 'distributionCenters'],
 };
 
 function OverrideContracts() {
-  const [overrideType, setOverrideType] = useState('distributor_price');
+  const [overrideType, setOverrideType] = useState('chain_customer');
   const [inputMode, setInputMode] = useState('manual');
   const [overrideMode, setOverrideMode] = useState('amount');
   const [overrideValue, setOverrideValue] = useState('');
@@ -500,3 +499,4 @@ function OverrideContracts() {
 }
 
 export default OverrideContracts;
+ 
