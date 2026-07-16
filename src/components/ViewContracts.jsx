@@ -10,7 +10,7 @@ import {
   SlidersHorizontal,
 } from 'lucide-react';
 import { API_BASE_URL } from '../lib/contractsSchema';
- 
+
 function parseDate(value) {
   if (!value) {
     return null;
@@ -18,7 +18,7 @@ function parseDate(value) {
   const parsed = new Date(value);
   return Number.isNaN(parsed.getTime()) ? null : parsed;
 }
- 
+
 function ViewContracts() {
   const [contracts, setContracts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -29,7 +29,7 @@ function ViewContracts() {
   const [chainFilter, setChainFilter] = useState('all');
   const [startDateFrom, setStartDateFrom] = useState('');
   const [endDateTo, setEndDateTo] = useState('');
- 
+
   const refreshContracts = async () => {
     setLoading(true);
     setErrorText('');
@@ -48,7 +48,7 @@ function ViewContracts() {
       setLoading(false);
     }
   };
- 
+
   useEffect(() => {
     const loadInitialContracts = async () => {
       setLoading(true);
@@ -68,10 +68,10 @@ function ViewContracts() {
         setLoading(false);
       }
     };
- 
+
     loadInitialContracts();
   }, []);
- 
+
   const contractTypes = useMemo(() => {
     const unique = new Set();
     contracts.forEach((contract) => {
@@ -81,7 +81,7 @@ function ViewContracts() {
     });
     return [...unique].sort((a, b) => a.localeCompare(b));
   }, [contracts]);
- 
+
   const distributors = useMemo(() => {
     const unique = new Set();
     contracts.forEach((contract) => {
@@ -91,7 +91,7 @@ function ViewContracts() {
     });
     return [...unique].sort((a, b) => a.localeCompare(b));
   }, [contracts]);
- 
+
   const chains = useMemo(() => {
     const unique = new Set();
     contracts.forEach((contract) => {
@@ -101,25 +101,25 @@ function ViewContracts() {
     });
     return [...unique].sort((a, b) => a.localeCompare(b));
   }, [contracts]);
- 
+
   const filteredContracts = useMemo(() => {
     const needle = searchTerm.trim().toLowerCase();
     const fromDate = parseDate(startDateFrom);
     const toDate = parseDate(endDateTo);
- 
+
     return contracts.filter((contract) => {
       if (typeFilter !== 'all' && contract.ContractType !== typeFilter) {
         return false;
       }
- 
+
       if (distributorFilter !== 'all' && contract.Distributor !== distributorFilter) {
         return false;
       }
- 
+
       if (chainFilter !== 'all' && contract.ChainID !== chainFilter) {
         return false;
       }
- 
+
       const contractStart = parseDate(contract.StartDate);
       const contractEnd = parseDate(contract.EndDate);
       if (fromDate && (!contractStart || contractStart < fromDate)) {
@@ -128,11 +128,11 @@ function ViewContracts() {
       if (toDate && (!contractEnd || contractEnd > toDate)) {
         return false;
       }
- 
+
       if (!needle) {
         return true;
       }
- 
+
       const haystack = [
         contract.ContractName,
         contract.ContractType,
@@ -145,16 +145,16 @@ function ViewContracts() {
         .filter(Boolean)
         .join(' ')
         .toLowerCase();
- 
+
       return haystack.includes(needle);
     });
   }, [contracts, searchTerm, typeFilter, distributorFilter, chainFilter, startDateFrom, endDateTo]);
- 
+
   const exportCsv = () => {
     if (!filteredContracts.length) {
       return;
     }
- 
+
     const headers = [
       'ContractType',
       'ContractName',
@@ -166,10 +166,8 @@ function ViewContracts() {
       'EndDate',
       'ContractPrice',
       'DistFee',
-      'DistributorPrice',
-      'Province',
     ];
- 
+
     const rows = filteredContracts.map((contract) =>
       headers
         .map((header) => {
@@ -179,7 +177,7 @@ function ViewContracts() {
         })
         .join(','),
     );
- 
+
     const csv = [headers.join(','), ...rows].join('\n');
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
@@ -189,14 +187,14 @@ function ViewContracts() {
     link.click();
     URL.revokeObjectURL(url);
   };
- 
+
   return (
     <div className="page-enter view-page gallery-mode">
       <header className="page-header">
         <h1 className="page-title">View Contracts</h1>
         <p className="page-subtitle">Browse and manage all existing contracts in the central data lake.</p>
       </header>
- 
+
       <section className="card filter-card">
         <div className="card-header">
           <h2 className="card-title filters-header">
@@ -217,7 +215,7 @@ function ViewContracts() {
                 ))}
               </select>
             </div>
- 
+
             <div className="form-group">
               <label htmlFor="distributorFilter">Distributor</label>
               <select
@@ -233,7 +231,7 @@ function ViewContracts() {
                 ))}
               </select>
             </div>
- 
+
             <div className="form-group">
               <label htmlFor="chainFilter">Chain</label>
               <select id="chainFilter" value={chainFilter} onChange={(event) => setChainFilter(event.target.value)}>
@@ -245,7 +243,7 @@ function ViewContracts() {
                 ))}
               </select>
             </div>
- 
+
             <div className="form-group">
               <label>Date Range</label>
               <div className="date-range-inputs">
@@ -265,7 +263,7 @@ function ViewContracts() {
           </div>
         </div>
       </section>
- 
+
       <section className="table-actions-bar">
         <label className="search-wrapper">
           <Search size={20} />
@@ -276,7 +274,7 @@ function ViewContracts() {
             onChange={(event) => setSearchTerm(event.target.value)}
           />
         </label>
- 
+
         <div className="table-meta">
           <p className="results-count">
             Showing <strong>{filteredContracts.length}</strong> of <strong>{contracts.length}</strong> contracts
@@ -291,7 +289,7 @@ function ViewContracts() {
           </button>
         </div>
       </section>
- 
+
       <section className="card table-card">
         <div className="card-body no-padding">
           {loading ? (
@@ -300,7 +298,7 @@ function ViewContracts() {
               <p>Loading contracts from Databricks...</p>
             </div>
           ) : null}
- 
+
           {!loading && errorText ? (
             <div className="alert danger">
               <FileText size={18} />
@@ -310,14 +308,14 @@ function ViewContracts() {
               </div>
             </div>
           ) : null}
- 
+
           {!loading && !errorText && !filteredContracts.length ? (
             <div className="empty-box">
               <FileText size={24} />
               <p>No contracts match your current filters.</p>
             </div>
           ) : null}
- 
+
           {!loading && !errorText && filteredContracts.length ? (
             <table className="gallery-table">
               <thead>
@@ -327,7 +325,6 @@ function ViewContracts() {
                   <th>Distributor</th>
                   <th>Chain ID</th>
                   <th>Price</th>
-                  <th>Province</th>
                   <th className="actions-cell">Actions</th>
                 </tr>
               </thead>
@@ -345,7 +342,6 @@ function ViewContracts() {
                         ? `$${Number(contract.ContractPrice).toFixed(2)}`
                         : '-'}
                     </td>
-                    <td>{contract.Province || '-'}</td>
                     <td className="actions-cell">
                       <button type="button" className="icon-btn" aria-label="View contract row">
                         <Eye size={17} />
@@ -363,7 +359,7 @@ function ViewContracts() {
             </table>
           ) : null}
         </div>
- 
+
         <div className="pagination-footer">
           <div className="rows-per-page">
             <span>Rows per page:</span>
@@ -381,6 +377,6 @@ function ViewContracts() {
     </div>
   );
 }
- 
+
 export default ViewContracts;
  
