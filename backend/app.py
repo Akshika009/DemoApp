@@ -1,3 +1,4 @@
+
 import datetime as dt
 import os
 import re
@@ -67,9 +68,6 @@ UPLOAD_COLUMNS = [
     "LastUpdatedDate",
     "Message",
     "FileName",
-    "DistributorPrice",
-    "Province",
-    "Reason",
 ]
 
 INSERT_COLUMNS = [
@@ -92,9 +90,6 @@ INSERT_COLUMNS = [
     "LastUpdatedBy",
     "Message",
     "FileName",
-    "DistributorPrice",
-    "Province",
-    "Reason",
 ]
 
 FULL_TEMPLATE_REQUIRED_COLUMNS = [
@@ -118,9 +113,6 @@ FULL_TEMPLATE_REQUIRED_COLUMNS = [
     "LastUpdatedDate",
     "Message",
     "FileName",
-    "DistributorPrice",
-    "Province",
-    "Reason",
 ]
 
 PDP_TEMPLATE_REQUIRED_COLUMNS = [
@@ -132,11 +124,10 @@ PDP_TEMPLATE_REQUIRED_COLUMNS = [
     "DistFee",
 ]
 
-NUMERIC_COLUMNS = {"ContractPrice", "DistFee", "Rebate", "DistributorPrice"}
-PRICE_COLUMNS_FOR_MULTIYEAR = ["ContractPrice", "DistributorPrice", "DistFee"]
+NUMERIC_COLUMNS = {"ContractPrice", "DistFee", "Rebate"}
+PRICE_COLUMNS_FOR_MULTIYEAR = ["ContractPrice", "DistFee"]
 
 OVERRIDE_COLUMN_MAP = {
-    "distributor_price": ["DistributorPrice"],
     "chain_customer": ["ContractPrice"],
     "pdp_customer": ["ContractPrice", "DistFee"],
     "pdp_off_tier": ["DistFee"],
@@ -1074,11 +1065,10 @@ def upload_contracts():
             ContractType, ContractName, StartDate, EndDate, InvenID, GTIN,
             ItemDescription, ChainID, Pack, LocId, DistributionCenter,
             Distributor, Customer, ContractPrice, DistFee, Rebate,
-            LastUpdatedBy, LastUpdatedDate, Message, FileName,
-            DistributorPrice, Province, Reason
+            LastUpdatedBy, LastUpdatedDate, Message, FileName
         ) VALUES (
             ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
-            ?, ?, ?, ?, ?, ?
+            ?, ?, ?
         )
     """
 
@@ -1123,9 +1113,6 @@ def upload_contracts():
                     final_row.get("LastUpdatedDate"),
                     final_row.get("Message"),
                     final_row.get("FileName"),
-                    final_row.get("DistributorPrice"),
-                    final_row.get("Province"),
-                    final_row.get("Reason")
                 ]
                 rows_to_insert.append(row_values)
 
@@ -1294,3 +1281,4 @@ if __name__ == "__main__":
         port=int(os.getenv("PORT") or os.getenv("DATABRICKS_APP_PORT") or "5000"),
         debug=(os.getenv("FLASK_DEBUG", "0") == "1"),
     )
+
