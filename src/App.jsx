@@ -9,7 +9,7 @@ import AppFooter from './components/AppFooter';
 import AiAssistantWidget from './components/AiAssistantWidget';
 import pepsicoLogo from './assets/pepsico-logo-official.png';
 
-const defaultUserName = import.meta.env.VITE_DEFAULT_USER_NAME || 'Akshika Guglani';
+const defaultUserName = import.meta.env.VITE_DEFAULT_USER_NAME || 'Divyansh';
 const defaultUserRole = import.meta.env.VITE_DEFAULT_USER_ROLE || 'Contracts Manager';
 
 const resolveUserName = () => {
