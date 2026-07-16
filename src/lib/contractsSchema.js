@@ -29,9 +29,6 @@ export const FULL_TEMPLATE_COLUMNS = [
   'LastUpdatedDate',
   'Message',
   'FileName',
-  'DistributorPrice',
-  'Province',
-  'Reason',
 ];
 
 export const PDP_TEMPLATE_COLUMNS = [
@@ -50,7 +47,6 @@ export const OVERRIDE_TEMPLATE_COLUMNS = [
   'Pack',
   'ContractPrice',
   'DistFee',
-  'DistributorPrice',
 ];
 
 export const REQUIRED_COLUMNS_BY_CONTRACT_TYPE = {
@@ -101,12 +97,6 @@ export const CONTRACT_TYPE_FORM_RULES = {
 
 export const OVERRIDE_TYPE_OPTIONS = [
   {
-    value: 'distributor_price',
-    title: 'Distributor Price',
-    description: 'Override distributor-side price values.',
-    dbColumns: ['DistributorPrice'],
-  },
-  {
     value: 'chain_customer',
     title: 'Chain Customer (Customer Price)',
     description: 'Override customer price for chain contracts.',
@@ -128,3 +118,4 @@ export const OVERRIDE_TYPE_OPTIONS = [
 
 export const normalizeListForApi = (values = []) =>
   values.filter((value) => value && value.toLowerCase() !== 'all');
+ 
