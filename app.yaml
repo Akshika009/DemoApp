@@ -8,6 +8,6 @@ env:
   - name: DATABRICKS_HTTP_PATH
     value: "/sql/1.0/warehouses/bea2f60a6550d05f"
   - name: DATABRICKS_ACCESS_TOKEN
-    value: "dapi75a52e8a4fd3a2a6c34d3ff2c788a7c2"
+    value: "dapi2950ede8a9a1246fa72d0b450856beb7"
   - name: DATABRICKS_TABLE
     value: "dis_pfc_con_gold_test.pbc_afh_contract"
